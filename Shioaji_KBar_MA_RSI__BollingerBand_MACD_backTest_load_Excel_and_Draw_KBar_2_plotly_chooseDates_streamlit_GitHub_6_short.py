@@ -304,6 +304,42 @@ with st.expander("K線圖, 長短 RSI"):
     fig2.layout.yaxis2.showgrid=True
     st.plotly_chart(fig2, use_container_width=True)
 
+#### (4) 計算各種技術指標 ####
+##### 將K線 Dictionary 轉換成 Dataframe
+KBar_df = pd.DataFrame(KBar_dic)
+
+##### (i) 移動平均線策略 #####
+#### 設定長短移動平均線的 K棒 長度:
+LongMAPeriod = 20  # Adjust this value as needed
+ShortMAPeriod = 5  # Adjust this value as needed
+
+#### 計算長短移動平均線
+KBar_df['MA_long'] = KBar_df['close'].rolling(window=LongMAPeriod).mean()
+KBar_df['MA_short'] = KBar_df['close'].rolling(window=ShortMAPeriod).mean()
+
+#### (ii) RSI 策略 #####
+# Calculate RSI as you did before
+
+#### (iii) Bollinger Bands ####
+window = 20  # Adjust this value as needed
+
+# Calculate rolling mean and standard deviation
+rolling_mean = KBar_df['close'].rolling(window=window).mean()
+rolling_std = KBar_df['close'].rolling(window=window).std()
+
+# Calculate Bollinger Bands
+KBar_df['BB_upper'] = rolling_mean + (rolling_std * 2)
+KBar_df['BB_lower'] = rolling_mean - (rolling_std * 2)
+
+#### (iv) Donchian Channels ####
+N = 20  # Adjust this value as needed
+
+# Calculate highest high and lowest low over last N periods
+KBar_df['DC_upper'] = KBar_df['high'].rolling(window=N).max()
+KBar_df['DC_lower'] = KBar_df['low'].rolling(window=N).min()
+
+#### (5) Plotting (畫圖) ####
+# Modify your plotting code to include Bollinger Bands and Donchian Channels
 
 
 
