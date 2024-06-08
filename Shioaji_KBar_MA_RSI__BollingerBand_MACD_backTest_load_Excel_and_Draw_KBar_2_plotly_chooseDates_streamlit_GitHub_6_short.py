@@ -338,13 +338,99 @@ N = 20  # Adjust this value as needed
 KBar_df['DC_upper'] = KBar_df['high'].rolling(window=N).max()
 KBar_df['DC_lower'] = KBar_df['low'].rolling(window=N).min()
 
-#### (5) Plotting (畫圖) ####
-# Modify your plotting code to include Bollinger Bands and Donchian Channels
+###### (5) 將 Dataframe 欄位名稱轉換  ###### 
+KBar_df.columns = [ i[0].upper()+i[1:] for i in KBar_df.columns ]
 
 
+###### (6) 畫圖 ######
+st.subheader("畫圖")
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
+#from plotly.offline import plot
+import plotly.offline as pyoff
 
 
+##### K線圖, 移動平均線 MA
+with st.expander("K線圖, 移動平均線"):
+    fig1 = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    #### include candlestick with rangeselector
+    fig1.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=True)   ## secondary_y=True 表示此圖形的y軸scale是在右邊而不是在左邊
+    
+    #### include a go.Bar trace for volumes
+    fig1.add_trace(go.Bar(x=KBar_df['Time'], y=KBar_df['Volume'], name='成交量', marker=dict(color='black')),secondary_y=False)  ## secondary_y=False 表示此圖形的y軸scale是在左邊而不是在右邊
+    fig1.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_MA+1:], y=KBar_df['MA_long'][last_nan_index_MA+1:], mode='lines',line=dict(color='orange', width=2), name=f'{LongMAPeriod}-根 K棒 移動平均線'), 
+                  secondary_y=True)
+    fig1.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_MA+1:], y=KBar_df['MA_short'][last_nan_index_MA+1:], mode='lines',line=dict(color='pink', width=2), name=f'{ShortMAPeriod}-根 K棒 移動平均線'), 
+                  secondary_y=True)
+    
+    fig1.layout.yaxis2.showgrid=True
+    st.plotly_chart(fig1, use_container_width=True)
 
+
+##### K線圖, RSI
+with st.expander("K線圖, 長短 RSI"):
+    fig2 = make_subplots(specs=[[{"secondary_y": True}]])
+    #### include candlestick with rangeselector
+    fig2.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=True)   ## secondary_y=True 表示此圖形的y軸scale是在右邊而不是在左邊
+    
+    fig2.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_RSI+1:], y=KBar_df['RSI_long'][last_nan_index_RSI+1:], mode='lines',line=dict(color='red', width=2), name=f'{LongRSIPeriod}-根 K棒 移動 RSI'), 
+                  secondary_y=False)
+    fig2.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_RSI+1:], y=KBar_df['RSI_short'][last_nan_index_RSI+1:], mode='lines',line=dict(color='blue', width=2), name=f'{ShortRSIPeriod}-根 K棒 移動 RSI'), 
+                  secondary_y=False)
+    
+    fig2.layout.yaxis2.showgrid=True
+    st.plotly_chart(fig2, use_container_width=True)
+
+##### (7) 計算布林通道 #####
+# 設定布林通道的 K棒長度和標準差倍數
+st.subheader("設定布林通道的 K 棒數目(整數, 例如 20)")
+BBPeriod = st.slider('選擇一個整數', 0, 100, 20)
+st.subheader("設定布林通道的標準差倍數(浮點數, 例如 2.0)")
+BBMultiplier = st.slider('選擇一個浮點數', 0.0, 10.0, 2.0)
+
+# 計算布林通道上下軌道和中軌
+KBar_df['BB_middle'] = KBar_df['close'].rolling(window=BBPeriod).mean()
+KBar_df['BB_upper'] = KBar_df['BB_middle'] + BBMultiplier * KBar_df['close'].rolling(window=BBPeriod).std()
+KBar_df['BB_lower'] = KBar_df['BB_middle'] - BBMultiplier * KBar_df['close'].rolling(window=BBPeriod).std()
+
+##### (8) 計算唐奇安通道 #####
+# 設定唐奇安通道的 K棒長度
+st.subheader("設定唐奇安通道的 K 棒數目(整數, 例如 20)")
+DonchianPeriod = st.slider('選擇一個整數', 0, 100, 20)
+
+# 計算唐奇安通道上下軌道
+KBar_df['Donchian_upper'] = KBar_df['high'].rolling(window=DonchianPeriod).max()
+KBar_df['Donchian_lower'] = KBar_df['low'].rolling(window=DonchianPeriod).min()
+
+##### 繪製布林通道和唐奇安通道圖 #####
+with st.expander("K線圖, 布林通道和唐奇安通道"):
+    fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    #### include candlestick with rangeselector
+    fig3.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=True)   ## secondary_y=True 表示此圖形的y軸scale是在右邊而不是在左邊
+    
+    #### include Bollinger Bands
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['BB_upper'], mode='lines', line=dict(color='red', width=1), name='布林通道上軌'), secondary_y=False)
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['BB_lower'], mode='lines', line=dict(color='green', width=1), name='布林通道下軌'), secondary_y=False)
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['BB_middle'], mode='lines', line=dict(color='blue', width=1), name='布林通道中軌'), secondary_y=False)
+    
+    #### include Donchian Channels
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['Donchian_upper'], mode='lines', line=dict(color='orange', width=1), name='唐奇安通道上軌'), secondary_y=False)
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['Donchian_lower'], mode='lines', line=dict(color='purple', width=1), name='唐奇安通道下軌'), secondary_y=False)
+    
+    fig3.layout.yaxis2.showgrid=True
+    st.plotly_chart(fig3, use_container_width=True)
 
 
 
