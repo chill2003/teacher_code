@@ -410,27 +410,33 @@ DonchianPeriod = st.slider('選擇一個整數', 0, 100, 20)
 KBar_df['Donchian_upper'] = KBar_df['high'].rolling(window=DonchianPeriod).max()
 KBar_df['Donchian_lower'] = KBar_df['low'].rolling(window=DonchianPeriod).min()
 
-##### 繪製布林通道和唐奇安通道圖 #####
-with st.expander("K線圖, 布林通道和唐奇安通道"):
-    fig3 = make_subplots(specs=[[{"secondary_y": True}]])
-    
+# 檢查DataFrame中的欄位名稱
+print(KBar_df.columns)
+
+# 確保欄位名稱為"Time"
+# 如果不是，請將下面的 "Time" 改為實際的時間欄位名稱
+time_column_name = "Time"
+
+# 尋找最後 NAN值的位置
+last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].apply(pd.isna)][0]
+last_nan_index_RSI = KBar_df['RSI_long'][::-1].index[KBar_df['RSI_long'][::-1].apply(pd.isna)][0]
+
+# 繪製圖表
+with st.expander("K線圖, 長短 RSI"):
+    fig2 = make_subplots(specs=[[{"secondary_y": True}]])
     #### include candlestick with rangeselector
-    fig3.add_trace(go.Candlestick(x=KBar_df['Time'],
+    fig2.add_trace(go.Candlestick(x=KBar_df[time_column_name],   # 使用確定的時間欄位名稱
                     open=KBar_df['Open'], high=KBar_df['High'],
                     low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
                    secondary_y=True)   ## secondary_y=True 表示此圖形的y軸scale是在右邊而不是在左邊
     
-    #### include Bollinger Bands
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['BB_upper'], mode='lines', line=dict(color='red', width=1), name='布林通道上軌'), secondary_y=False)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['BB_lower'], mode='lines', line=dict(color='green', width=1), name='布林通道下軌'), secondary_y=False)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['BB_middle'], mode='lines', line=dict(color='blue', width=1), name='布林通道中軌'), secondary_y=False)
+    fig2.add_trace(go.Scatter(x=KBar_df[time_column_name][last_nan_index_RSI+1:], y=KBar_df['RSI_long'][last_nan_index_RSI+1:], mode='lines',line=dict(color='red', width=2), name=f'{LongRSIPeriod}-根 K棒 移動 RSI'), 
+                  secondary_y=False)
+    fig2.add_trace(go.Scatter(x=KBar_df[time_column_name][last_nan_index_RSI+1:], y=KBar_df['RSI_short'][last_nan_index_RSI+1:], mode='lines',line=dict(color='blue', width=2), name=f'{ShortRSIPeriod}-根 K棒 移動 RSI'), 
+                  secondary_y=False)
     
-    #### include Donchian Channels
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['Donchian_upper'], mode='lines', line=dict(color='orange', width=1), name='唐奇安通道上軌'), secondary_y=False)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['Donchian_lower'], mode='lines', line=dict(color='purple', width=1), name='唐奇安通道下軌'), secondary_y=False)
-    
-    fig3.layout.yaxis2.showgrid=True
-    st.plotly_chart(fig3, use_container_width=True)
+    fig2.layout.yaxis2.showgrid=True
+    st.plotly_chart(fig2, use_container_width=True)
 
 
 
