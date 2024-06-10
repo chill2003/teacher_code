@@ -214,9 +214,10 @@ last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].appl
 #### 順勢策略
 ### 設定長短 RSI 的 K棒 長度:
 st.subheader("設定計算長RSI的 K 棒數目(整數, 例如 10)")
-LongRSIPeriod=st.slider('選擇一個整數', 0, 1000, 10)
+LongRSIPeriod = st.slider('選擇一個整數', 0, 1000, 10, key='long_rsi_period')
+
 st.subheader("設定計算短RSI的 K 棒數目(整數, 例如 2)")
-ShortRSIPeriod=st.slider('選擇一個整數', 0, 1000, 2)
+ShortRSIPeriod = st.slider('選擇一個整數', 0, 1000, 2, key='short_rsi_period')
 
 ### 計算 RSI指標長短線, 以及定義中線
 ## 假设 df 是一个包含价格数据的Pandas DataFrame，其中 'close' 是KBar週期收盤價
