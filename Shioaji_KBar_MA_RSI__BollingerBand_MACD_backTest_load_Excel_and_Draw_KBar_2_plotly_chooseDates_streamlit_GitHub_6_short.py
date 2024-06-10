@@ -10,7 +10,8 @@ import indicator_f_Lo2_short,datetime, indicator_forKBar_short
 import datetime
 import pandas as pd
 import streamlit as st 
-import streamlit.components.v1 as stc 
+import streamlit.components.v1 as stc
+import time
 
 #進度條
 bar = st.progress(0)
