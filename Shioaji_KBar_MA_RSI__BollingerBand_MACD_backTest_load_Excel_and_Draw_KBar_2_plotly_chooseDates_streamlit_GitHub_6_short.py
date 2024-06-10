@@ -32,7 +32,7 @@ stc.html(html_temp)
 # df_original.to_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 ## 读取Pickle文件
-df_original = pd.read_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
+df_original = pd.read_pickle('2201.pkl')
 
 
 #df.columns  ## Index(['Unnamed: 0', 'time', 'open', 'low', 'high', 'close', 'volume','amount'], dtype='object')
@@ -48,9 +48,9 @@ df_original = df_original.drop('Unnamed: 0',axis=1)
 
 ##### 選擇資料區間
 #st.set_page_config(layout = 'wide',initial_sidebar_state='expanded')
-st.sidebar.header("選擇開始與結束的日期, 區間:2022-01-03 至 2022-11-18")
+st.sidebar.header("選擇開始與結束的日期, 區間:2022-01-03 至 2024-06-07")
 start_date = st.sidebar.text_input('選擇開始日期 (日期格式: 2022-01-03)', '2022-01-03')
-end_date = st.sidebar.text_input('選擇結束日期 (日期格式: 2022-11-18)', '2022-11-18')
+end_date = st.sidebar.text_input('選擇結束日期 (日期格式: 2024-06-07)', '2024-06-07')
 start_date = datetime.datetime.strptime(start_date,'%Y-%m-%d')
 end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
 # 使用条件筛选选择时间区间的数据
