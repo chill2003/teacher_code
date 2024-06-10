@@ -32,7 +32,7 @@ stc.html(html_temp)
 # df_original.to_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 ## 读取Pickle文件
-df_original = pd.read_pickle('2201.pkl')
+df_original = pd.read_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 
 #df.columns  ## Index(['Unnamed: 0', 'time', 'open', 'low', 'high', 'close', 'volume','amount'], dtype='object')
@@ -47,10 +47,9 @@ df_original = df_original.drop('Unnamed: 0',axis=1)
 
 
 ##### 選擇資料區間
-#st.set_page_config(layout = 'wide',initial_sidebar_state='expanded')
-st.sidebar.header("選擇開始與結束的日期, 區間:2022-01-03 至 2024-06-07")
-start_date = st.sidebar.text_input('選擇開始日期 (日期格式: 2022-01-03)', '2022-01-03')
-end_date = st.sidebar.text_input('選擇結束日期 (日期格式: 2024-06-07)', '2024-06-07')
+st.subheader("選擇開始與結束的日期, 區間:2022-01-03 至 2022-11-18")
+start_date = st.text_input('選擇開始日期 (日期格式: 2022-01-03)', '2022-01-03')
+end_date = st.text_input('選擇結束日期 (日期格式: 2022-11-18)', '2022-11-18')
 start_date = datetime.datetime.strptime(start_date,'%Y-%m-%d')
 end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
 # 使用条件筛选选择时间区间的数据
@@ -113,8 +112,8 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 
 Date = start_date.strftime("%Y-%m-%d")
 
-st.sidebar.subheader("設定一根 K 棒的時間長度(分鐘)")
-cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value=1440, key="KBar_duration")
+st.subheader("設定一根 K 棒的時間長度(分鐘)")
+cycle_duration = st.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)', key="KBar_duration")
 cycle_duration = int(cycle_duration)
 #cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
 #KBar = indicator_f_Lo2.KBar(Date,'time',2)
@@ -214,10 +213,9 @@ last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].appl
 #### 順勢策略
 ### 設定長短 RSI 的 K棒 長度:
 st.subheader("設定計算長RSI的 K 棒數目(整數, 例如 10)")
-LongRSIPeriod = st.slider('選擇一個整數', 0, 1000, 10, key='long_rsi_period')
-
+LongRSIPeriod=st.slider('選擇一個整數', 0, 1000, 10)
 st.subheader("設定計算短RSI的 K 棒數目(整數, 例如 2)")
-ShortRSIPeriod = st.slider('選擇一個整數', 0, 1000, 2, key='short_rsi_period')
+ShortRSIPeriod=st.slider('選擇一個整數', 0, 1000, 2)
 
 ### 計算 RSI指標長短線, 以及定義中線
 ## 假设 df 是一个包含价格数据的Pandas DataFrame，其中 'close' 是KBar週期收盤價
@@ -237,8 +235,6 @@ KBar_df['RSI_Middle']=np.array([50]*len(KBar_dic['time']))
 ### 尋找最後 NAN值的位置
 last_nan_index_RSI = KBar_df['RSI_long'][::-1].index[KBar_df['RSI_long'][::-1].apply(pd.isna)][0]
 
-# 設定計算唐琪安通道的 K 棒數目
-dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 1000, 20)
 
 # #### 逆勢策略
 # ### 建立部位管理物件
@@ -362,3 +358,18 @@ with st.expander("布林通道圖"):
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['middle_bb'], mode='lines', line=dict(color='red'), name='Middle Bollinger Band'))
     fig_bb.update_layout(height=600, title_text="布林通道")
     st.plotly_chart(fig_bb, use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
