@@ -309,24 +309,24 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 import streamlit as st
-
 # 計算布林通道
 def calculate_bollinger_bands(df, window=20, num_std=2):
-    rolling_mean = df['close'].rolling(window=window).mean()
-    rolling_std = df['close'].rolling(window=window).std()
+    rolling_mean = df['Close'].rolling(window=window).mean()  # 修改這裡的欄位名稱
+    rolling_std = df['Close'].rolling(window=window).std()    # 修改這裡的欄位名稱
     upper_band = rolling_mean + (rolling_std * num_std)
     lower_band = rolling_mean - (rolling_std * num_std)
     return upper_band, lower_band
 
 # 計算唐琪安通道
 def calculate_donchian_channels(df, window=20):
-    upper_channel = df['high'].rolling(window=window).max()
-    lower_channel = df['low'].rolling(window=window).min()
+    upper_channel = df['High'].rolling(window=window).max()   # 修改這裡的欄位名稱
+    lower_channel = df['Low'].rolling(window=window).min()    # 修改這裡的欄位名稱
     return upper_channel, lower_channel
 
-# 設定布林通道和唐琪安通道的參數
-bb_window = st.sidebar.number_input('布林通道窗口大小', value=20)
-dc_window = st.sidebar.number_input('唐琪安通道窗口大小', value=20)
+# 計算指標
+KBar_df['upper_bb'], KBar_df['lower_bb'] = calculate_bollinger_bands(KBar_df, window=bb_window)
+KBar_df['upper_dc'], KBar_df['lower_dc'] = calculate_donchian_channels(KBar_df, window=dc_window)
+
 
 # 計算指標
 KBar_df['upper_bb'], KBar_df['lower_bb'] = calculate_bollinger_bands(KBar_df, window=bb_window)
