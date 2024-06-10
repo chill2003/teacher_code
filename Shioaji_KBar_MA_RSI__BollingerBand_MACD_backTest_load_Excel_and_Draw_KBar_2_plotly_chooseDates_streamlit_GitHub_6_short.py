@@ -16,7 +16,7 @@ import time
 ###### (1) 開始設定 ######
 st.set_page_config(
     page_title="金融APP看板",
-    page_icon="random",
+    page_icon="C:\\Users\\User\\Downloads\\bars.png",
     layout="centered",
     initial_sidebar_state="expanded",
 )
