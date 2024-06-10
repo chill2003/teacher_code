@@ -28,7 +28,6 @@ for i in range(100):
     time.sleep(0.05)
 
 bar.progress(100, '載入完成！')
-st.success("資料加載完成!!")
 st.balloons()
 
 #df = pd.read_excel("kbars_台積電_1100701_1100708_2.xlsx")
@@ -369,7 +368,7 @@ with st.expander("布林通道圖"):
     fig_bb.update_layout(height=600, title_text="布林通道")
     st.plotly_chart(fig_bb, use_container_width=True)
 
-
+st.success("資料加載完成!!")
 
 
 
