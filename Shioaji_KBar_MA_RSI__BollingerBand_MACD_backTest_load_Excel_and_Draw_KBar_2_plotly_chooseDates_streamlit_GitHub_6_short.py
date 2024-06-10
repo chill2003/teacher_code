@@ -370,7 +370,7 @@ with st.expander("布林通道圖"):
     st.plotly_chart(fig_bb, use_container_width=True)
 
 
-
+st.success('全部資料下載完成，請在做手邊的欄位做K棒設定!')
 
 
 
