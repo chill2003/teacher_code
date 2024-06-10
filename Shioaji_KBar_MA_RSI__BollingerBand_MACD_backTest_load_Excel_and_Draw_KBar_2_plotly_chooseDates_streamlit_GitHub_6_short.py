@@ -328,6 +328,7 @@ KBar_df['upper_bb'], KBar_df['lower_bb'] = calculate_bollinger_bands(KBar_df, wi
 KBar_df['upper_dc'], KBar_df['lower_dc'] = calculate_donchian_channels(KBar_df, window=dc_window)
 
 
+
 # 計算指標
 KBar_df['upper_bb'], KBar_df['lower_bb'] = calculate_bollinger_bands(KBar_df, window=bb_window)
 KBar_df['upper_dc'], KBar_df['lower_dc'] = calculate_donchian_channels(KBar_df, window=dc_window)
