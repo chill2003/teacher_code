@@ -121,12 +121,13 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 
 Date = start_date.strftime("%Y-%m-%d")
 
-st.sidebar.subheader("設定一根K棒的時間長度(分鐘)")
-cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value = 1440, key="KBar_duration")
-cycle_duration = int(cycle_duration)
+st.sidebar.subheader("設定一根K棒的時間長度(天)")
+cycle_duration_days = cycle_duration / 1440
+cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:天)',value = 1440, key="KBar_duration")
+cycle_duration_days = int(cycle_duration_days)
 #cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
 #KBar = indicator_f_Lo2.KBar(Date,'time',2)
-KBar = indicator_forKBar_short.KBar(Date,cycle_duration)    ## 設定cycle_duration可以改成你想要的 KBar 週期
+KBar = indicator_forKBar_short.KBar(Date, cycle_duration_days)    ## 設定cycle_duration可以改成你想要的 KBar 週期
 
 #KBar_dic['amount'].shape   ##(5585,)
 #KBar_dic['amount'].size    ##5585
