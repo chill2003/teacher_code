@@ -46,15 +46,23 @@ df_original = df_original.drop('Unnamed: 0',axis=1)
 #type(df['time'][0])
 
 
-##### 選擇資料區間
-#st.set_page_config(layout = 'wide',initial_sidebar_state='expanded')
+import datetime
+
+# 選擇資料區間
 st.sidebar.header("選擇開始與結束的日期, 區間:2022-01-03 至 2024-06-07")
 start_date = st.sidebar.text_input('選擇開始日期 (日期格式: 2022-01-03)', '2022-01-03')
 end_date = st.sidebar.text_input('選擇結束日期 (日期格式: 2024-06-07)', '2024-06-07')
+
+# 將日期字符串轉換為 datetime 對象
 start_date = datetime.datetime.strptime(start_date,'%Y-%m-%d')
 end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
-# 使用条件筛选选择时间区间的数据
+
+# 將 df_original 中的 time 列轉換為 datetime 對象
+df_original['time'] = pd.to_datetime(df_original['time'])
+
+# 使用條件篩選選擇時間區間的數據
 df = df_original[(df_original['time'] >= start_date) & (df_original['time'] <= end_date)]
+
 
 
 ###### (2) 轉化為字典 ######:
