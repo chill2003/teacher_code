@@ -1,4 +1,4 @@
-﻿# -*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 # 載入相關套件
 #import talib,numpy,datetime
 import numpy,datetime
