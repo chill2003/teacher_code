@@ -338,19 +338,23 @@ KBar_df['upper_dc'], KBar_df['lower_dc'] = calculate_donchian_channels(KBar_df, 
 
 # 畫圖
 with st.expander("布林通道,唐琪安通道"):
-     fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.1)
 
-     fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_bb'], mode='lines', line=dict(color='blue'), name='Upper Bollinger Band'),row=1, col=1)
-     fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_bb'], mode='lines', line=dict(color='blue'), name='Lower Bollinger Band'),row=1, col=1)
-     fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'),row=2, col=1)
-     fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'),row=2, col=1)
+    # 布林通道
+    fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_bb'], mode='lines', line=dict(color='blue'), name='Upper Bollinger Band'), row=1, col=1)
+    fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_bb'], mode='lines', line=dict(color='blue'), name='Lower Bollinger Band'), row=1, col=1)
+    
+    # 唐琪安通道
+    fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'), row=2, col=1)
+    fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'), row=2, col=1)
 
-# 加入 K 線圖
-     fig.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'],  close=KBar_df['Close'], name='K線'),row=1, col=1)
-     fig.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),row=2, col=1)
+    # 加入 K 線圖
+    fig.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'), row=1, col=1)
+    fig.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'), row=2, col=1)
 
-     fig.update_layout(height=800, title_text="布林通道和唐琪安通道")
-     st.plotly_chart(fig, use_container_width=True)
+    # 設置圖表布局
+    fig.update_layout(height=800, title_text="布林通道和唐琪安通道")
+    st.plotly_chart(fig, use_container_width=True)
 
 
 
