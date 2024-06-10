@@ -319,6 +319,7 @@ def calculate_bollinger_bands(df, window=20, num_std=2):
     lower_band = rolling_mean - (rolling_std * num_std)
     return upper_band, lower_band
 
+dc_window = 20
 # 計算唐琪安通道
 def calculate_donchian_channels(df, window=20):
     upper_channel = df['High'].rolling(window=window).max()   # 修改這裡的欄位名稱
