@@ -28,6 +28,7 @@ for i in range(100):
     time.sleep(0.05)
 
 bar.progress(100, '載入完成！')
+st.info('請看右上角的RUNNING...，如果未消失，代表還有資料在加載中，請耐心等候!!')
 st.balloons()
 
 #df = pd.read_excel("kbars_台積電_1100701_1100708_2.xlsx")
@@ -367,29 +368,6 @@ with st.expander("布林通道圖"):
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['middle_bb'], mode='lines', line=dict(color='red'), name='Middle Bollinger Band'))
     fig_bb.update_layout(height=600, title_text="布林通道")
     st.plotly_chart(fig_bb, use_container_width=True)
-
-import plotly.graph_objects as go
-
-# 假設 predicted_prices 是你的預測價格列表
-predicted_prices = [...]  # 假設這裡是你的預測價格列表
-
-# 創建一個新的 Figure 對象
-fig = go.Figure()
-
-# 添加原始價格折線圖
-fig.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['Close'], mode='lines', name='原始價格'))
-
-# 添加預測價格折線圖
-fig.add_trace(go.Scatter(x=KBar_df['Time'], y=predicted_prices, mode='lines', name='預測價格'))
-
-# 更新圖表佈局
-fig.update_layout(title='原始價格與預測價格', xaxis_title='時間', yaxis_title='價格')
-
-# 顯示圖表
-st.plotly_chart(fig, use_container_width=True)
-
-
-st.success("資料加載完成!!")
 
 
 
