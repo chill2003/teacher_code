@@ -19,37 +19,31 @@ class KBar():
         self.TAKBar['volume'] = np.array([])
         self.current = datetime.datetime.strptime(date + ' 00:00:00','%Y-%m-%d %H:%M:%S')
         self.cycle = datetime.timedelta(minutes = cycle)
-    def AddPrice(self,time, open_price, close_price, low_price, high_price,volume):
-    # 如果 K 棒的時間早於等於當前時間，則更新現有的 K 棒
-    if time <= self.current:
-        # 如果 K 棒的收盤價和成交量陣列為空，則添加第一個元素
-        if len(self.TAKBar['close']) == 0:
-            self.TAKBar['time'] = np.array([time])
-            self.TAKBar['open'] = np.array([open_price])
-            self.TAKBar['high'] = np.array([high_price])
-            self.TAKBar['low'] = np.array([low_price])
-            self.TAKBar['close'] = np.array([close_price])
-            self.TAKBar['volume'] = np.array([volume])
-        else:
-            # 否則更新 K 棒的相關數據
+     def AddPrice(self,time, open_price, close_price, low_price, high_price,volume):
+        # 同一根K棒
+        if time <= self.current:
+            # 更新收盤價
             self.TAKBar['close'][-1] = close_price
+            # 更新成交量
             self.TAKBar['volume'][-1] += volume  
+            # 更新最高價
             self.TAKBar['high'][-1] = max(self.TAKBar['high'][-1],high_price)
+            # 更新最低價
             self.TAKBar['low'][-1] = min(self.TAKBar['low'][-1],low_price)  
-        # 返回0表示未更新 K 棒
-        return 0
-    # 如果 K 棒的時間晚於當前時間，則創建一個新的 K 棒
-    else:
-        while time > self.current:
-            self.current += self.cycle
-        self.TAKBar['time'] = np.append(self.TAKBar['time'],self.current)
-        self.TAKBar['open'] = np.append(self.TAKBar['open'],open_price)
-        self.TAKBar['high'] = np.append(self.TAKBar['high'],high_price)
-        self.TAKBar['low'] = np.append(self.TAKBar['low'],low_price)
-        self.TAKBar['close'] = np.append(self.TAKBar['close'],close_price)
-        self.TAKBar['volume'] = np.append(self.TAKBar['volume'],volume)
-        # 返回1表示已更新 K 棒
-        return 1
+            # 若沒有更新K棒，則回傳0
+            return 0
+        # 不同根K棒
+        else:
+            while time > self.current:
+                self.current += self.cycle
+            self.TAKBar['time'] = np.append(self.TAKBar['time'],self.current)
+            self.TAKBar['open'] = np.append(self.TAKBar['open'],open_price)
+            self.TAKBar['high'] = np.append(self.TAKBar['high'],high_price)
+            self.TAKBar['low'] = np.append(self.TAKBar['low'],low_price)
+            self.TAKBar['close'] = np.append(self.TAKBar['close'],close_price)
+            self.TAKBar['volume'] = np.append(self.TAKBar['volume'],volume)
+            # 若有更新K棒，則回傳1
+            return 1
 
     # 取時間
     def GetTime(self):
