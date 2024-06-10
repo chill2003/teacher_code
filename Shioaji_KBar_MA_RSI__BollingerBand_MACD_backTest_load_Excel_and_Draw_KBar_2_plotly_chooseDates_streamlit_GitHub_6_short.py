@@ -309,6 +309,8 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 import streamlit as st
+
+bb_window = 20
 # 計算布林通道
 def calculate_bollinger_bands(df, window=20, num_std=2):
     rolling_mean = df['Close'].rolling(window=window).mean()  # 修改這裡的欄位名稱
