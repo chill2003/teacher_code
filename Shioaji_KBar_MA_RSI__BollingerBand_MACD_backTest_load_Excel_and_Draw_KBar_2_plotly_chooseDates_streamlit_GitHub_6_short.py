@@ -122,8 +122,8 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 Date = start_date.strftime("%Y-%m-%d")
 
 st.sidebar.subheader("設定一根K棒的時間長度(天)")
-cycle_duration_days = cycle_duration / 1440
 cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:天)',value = 1440, key="KBar_duration")
+cycle_duration_days = cycle_duration / 1440
 cycle_duration_days = int(cycle_duration_days)
 #cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
 #KBar = indicator_f_Lo2.KBar(Date,'time',2)
