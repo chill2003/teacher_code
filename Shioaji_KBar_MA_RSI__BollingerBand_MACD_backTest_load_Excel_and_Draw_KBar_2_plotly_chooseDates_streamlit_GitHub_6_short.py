@@ -12,11 +12,19 @@ import pandas as pd
 import streamlit as st 
 import streamlit.components.v1 as stc 
 
+#進度條
+bar = st.progress(0)
+for i in range(100):
+    bar.progress(i + 1, f'目前進度 {i+1} %')
+    time.sleep(0.05)
 
+bar.progress(100, '載入完成！')
+st.success('Success!')
+st.balloons()
 ###### (1) 開始設定 ######
 html_temp = """
 		<div style="background-color:#3872fb;padding:10px;border-radius:10px">
-		<h1 style="color:white;text-align:center;">金融資料視覺化呈現 (金融看板) </h1>
+		<h1 style="color:white;text-align:center;">金融看板 </h1>
 		<h2 style="color:white;text-align:center;">Financial Dashboard </h2>
 		</div>
 		"""
