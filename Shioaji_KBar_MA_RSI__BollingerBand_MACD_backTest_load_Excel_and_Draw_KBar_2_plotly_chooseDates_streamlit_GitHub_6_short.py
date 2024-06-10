@@ -212,8 +212,8 @@ last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].appl
 #### 順勢策略
 ### 設定長短 RSI 的 K棒 長度:
 st.sidebar.subheader("設定RSI的K棒數目")
-LongRSIPeriod=st.sidebar.slider('設定計算長RSI的 K 棒數目', 0, 100, 0)
-ShortRSIPeriod=st.sidebar.slider('設定計算短RSI的 K 棒數目', 0, 100, 0)
+LongRSIPeriod=st.sidebar.slider('設定計算長RSI的 K 棒數目', 0, 1000, 0)
+ShortRSIPeriod=st.sidebar.slider('設定計算短RSI的 K 棒數目', 0, 1000, 0)
 
 ### 計算 RSI指標長短線, 以及定義中線
 ## 假设 df 是一个包含价格数据的Pandas DataFrame，其中 'close' 是KBar週期收盤價
@@ -255,7 +255,6 @@ KBar_df.columns = [ i[0].upper()+i[1:] for i in KBar_df.columns ]
 
 
 ###### (6) 畫圖 ######
-st.subheader("畫圖")
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
@@ -264,7 +263,7 @@ import plotly.offline as pyoff
 
 
 ##### K線圖, 移動平均線 MA
-with st.expander("K線圖, 移動平均線"):
+with st.expander("MA圖"):
     fig1 = make_subplots(specs=[[{"secondary_y": True}]])
     
     #### include candlestick with rangeselector
@@ -285,7 +284,7 @@ with st.expander("K線圖, 移動平均線"):
 
 
 ##### K線圖, RSI
-with st.expander("K線圖, 長短 RSI"):
+with st.expander("RSI圖"):
     fig2 = make_subplots(specs=[[{"secondary_y": True}]])
     #### include candlestick with rangeselector
     fig2.add_trace(go.Candlestick(x=KBar_df['Time'],
