@@ -32,7 +32,7 @@ stc.html(html_temp)
 # df_original.to_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 ## 读取Pickle文件
-df_original = pd.read_pickle('2201.pkl')
+df_original = pd.read_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 
 #df.columns  ## Index(['Unnamed: 0', 'time', 'open', 'low', 'high', 'close', 'volume','amount'], dtype='object')
@@ -49,14 +49,13 @@ df_original = df_original.drop('Unnamed: 0',axis=1)
 ##### 選擇資料區間
 #st.set_page_config(layout = 'wide',initial_sidebar_state='expanded')
 st.sidebar.header("選擇開始與結束的日期, 區間:2022-01-03 至 2022-11-18")
-Date = start_date.strftime("%Y-%m-%d")
+start_date = st.sidebar.text_input('選擇開始日期 (日期格式: 2022-01-03)', '2022-01-03')
+end_date = st.sidebar.text_input('選擇結束日期 (日期格式: 2022-11-18)', '2022-11-18')
+start_date = datetime.datetime.strptime(start_date,'%Y-%m-%d')
+end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
+# 使用条件筛选选择时间区间的数据
+df = df_original[(df_original['time'] >= start_date) & (df_original['time'] <= end_date)]
 
-st.sidebar.subheader("設定一根 K 棒的時間長度(分鐘)")
-cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value=1440, key="KBar_duration")
-cycle_duration = int(cycle_duration)
-#cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
-#KBar = indicator_f_Lo2.KBar(Date,'time',2)
-KBar = indicator_forKBar_short.KBar(Date,cycle_duration) 
 
 ###### (2) 轉化為字典 ######:
 KBar_dic = df.to_dict()
@@ -114,12 +113,12 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 
 Date = start_date.strftime("%Y-%m-%d")
 
-st.sidebar.subheader("設定一根 K 棒的時間長度(天)")
-cycle_duration_days = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:天)', value=1, key="KBar_duration_days")
-cycle_duration = int(cycle_duration_days)  # 将天数转换为整数
-# cycle_duration = 1  # 这里是默认值，你也可以直接设置为1，表示一天为一个K棒
-
-KBar = indicator_forKBar_short.KBar(Date, cycle_duration)  # 创建KBar对象，将天数作为周期长度
+st.sidebar.subheader("設定一根 K 棒的時間長度(分鐘)")
+cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value=1440, key="KBar_duration")
+cycle_duration = int(cycle_duration)
+#cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
+#KBar = indicator_f_Lo2.KBar(Date,'time',2)
+KBar = indicator_forKBar_short.KBar(Date,cycle_duration)    ## 設定cycle_duration可以改成你想要的 KBar 週期
 
 #KBar_dic['amount'].shape   ##(5585,)
 #KBar_dic['amount'].size    ##5585
@@ -348,6 +347,7 @@ KBar_df = calculate_bollinger_bands(KBar_df, window=bb_window)
 # 唐奇安通道圖表
 with st.expander("唐奇安通道圖"):
     fig_dc = go.Figure()
+    fig_dc.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'))
     fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'))
     fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'))
     fig_dc.update_layout(height=600, title_text="唐奇安通道")
@@ -356,6 +356,7 @@ with st.expander("唐奇安通道圖"):
 # 布林通道圖表
 with st.expander("布林通道圖"):
     fig_bb = go.Figure()
+    fig_bb.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'))
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_bb'], mode='lines', line=dict(color='blue'), name='Upper Bollinger Band'))
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_bb'], mode='lines', line=dict(color='blue'), name='Lower Bollinger Band'))
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['middle_bb'], mode='lines', line=dict(color='red'), name='Middle Bollinger Band'))
