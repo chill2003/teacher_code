@@ -61,7 +61,7 @@ end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
 df_original['time'] = pd.to_datetime(df_original['time'])
 
 # 使用條件篩選選擇時間區間的數據
-#df = df_original[(df_original['time'] >= start_date) & (df_original['time'] <= end_date)]
+df = df_original[(df_original['time'] >= start_date) & (df_original['time'] <= end_date)]
 
 
 
