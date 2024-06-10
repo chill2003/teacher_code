@@ -32,7 +32,7 @@ stc.html(html_temp)
 # df_original.to_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 ## 读取Pickle文件
-df_original = pd.read_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
+df_original = pd.read_pickle('2201.pkl')
 
 
 #df.columns  ## Index(['Unnamed: 0', 'time', 'open', 'low', 'high', 'close', 'volume','amount'], dtype='object')
@@ -113,12 +113,12 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 
 Date = start_date.strftime("%Y-%m-%d")
 
-st.sidebar.subheader("設定一根 K 棒的時間長度(分鐘)")
-cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value=1440, key="KBar_duration")
-cycle_duration = int(cycle_duration)
-#cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
-#KBar = indicator_f_Lo2.KBar(Date,'time',2)
-KBar = indicator_forKBar_short.KBar(Date,cycle_duration)    ## 設定cycle_duration可以改成你想要的 KBar 週期
+st.sidebar.subheader("設定一根 K 棒的時間長度(天)")
+cycle_duration_days = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:天)', value=1, key="KBar_duration_days")
+cycle_duration = int(cycle_duration_days)  # 将天数转换为整数
+# cycle_duration = 1  # 这里是默认值，你也可以直接设置为1，表示一天为一个K棒
+
+KBar = indicator_forKBar_short.KBar(Date, cycle_duration)  # 创建KBar对象，将天数作为周期长度
 
 #KBar_dic['amount'].shape   ##(5585,)
 #KBar_dic['amount'].size    ##5585
@@ -219,38 +219,6 @@ LongRSIPeriod = st.slider('選擇一個整數', 0, 1000, 10, key='long_rsi_perio
 st.subheader("設定計算短RSI的 K 棒數目(整數, 例如 2)")
 ShortRSIPeriod = st.slider('選擇一個整數', 0, 1000, 2, key='short_rsi_period')
 
-###### (5) 將 Dataframe 欄位名稱轉換  ###### 
-KBar_df.columns = [ i[0].upper()+i[1:] for i in KBar_df.columns ]
-
-###### 畫圖 ######
-st.subheader("畫圖")
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import pandas as pd
-#from plotly.offline import plot
-import plotly.offline as pyoff
-
-
-##### K線圖, 移動平均線 MA
-with st.expander("K線圖, 移動平均線"):
-    fig1 = make_subplots(specs=[[{"secondary_y": True}]])
-    
-    #### include candlestick with rangeselector
-    fig1.add_trace(go.Candlestick(x=KBar_df['Time'],
-                    open=KBar_df['Open'], high=KBar_df['High'],
-                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
-                   secondary_y=True)   ## secondary_y=True 表示此圖形的y軸scale是在右邊而不是在左邊
-    
-    #### include a go.Bar trace for volumes
-    fig1.add_trace(go.Bar(x=KBar_df['Time'], y=KBar_df['Volume'], name='成交量', marker=dict(color='black')),secondary_y=False)  ## secondary_y=False 表示此圖形的y軸scale是在左邊而不是在右邊
-    fig1.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_MA+1:], y=KBar_df['MA_long'][last_nan_index_MA+1:], mode='lines',line=dict(color='orange', width=2), name=f'{LongMAPeriod}-根 K棒 移動平均線'), 
-                  secondary_y=True)
-    fig1.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_MA+1:], y=KBar_df['MA_short'][last_nan_index_MA+1:], mode='lines',line=dict(color='pink', width=2), name=f'{ShortMAPeriod}-根 K棒 移動平均線'), 
-                  secondary_y=True)
-    
-    fig1.layout.yaxis2.showgrid=True
-    st.plotly_chart(fig1, use_container_width=True)
-
 ### 計算 RSI指標長短線, 以及定義中線
 ## 假设 df 是一个包含价格数据的Pandas DataFrame，其中 'close' 是KBar週期收盤價
 def calculate_rsi(df, period=14):
@@ -288,6 +256,40 @@ dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如
 # KBar_RSI_df=pd.DataFrame(KBar_dic)
 
 
+###### (5) 將 Dataframe 欄位名稱轉換  ###### 
+KBar_df.columns = [ i[0].upper()+i[1:] for i in KBar_df.columns ]
+
+
+###### (6) 畫圖 ######
+st.subheader("畫圖")
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
+#from plotly.offline import plot
+import plotly.offline as pyoff
+
+
+##### K線圖, 移動平均線 MA
+with st.expander("K線圖, 移動平均線"):
+    fig1 = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    #### include candlestick with rangeselector
+    fig1.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=True)   ## secondary_y=True 表示此圖形的y軸scale是在右邊而不是在左邊
+    
+    #### include a go.Bar trace for volumes
+    fig1.add_trace(go.Bar(x=KBar_df['Time'], y=KBar_df['Volume'], name='成交量', marker=dict(color='black')),secondary_y=False)  ## secondary_y=False 表示此圖形的y軸scale是在左邊而不是在右邊
+    fig1.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_MA+1:], y=KBar_df['MA_long'][last_nan_index_MA+1:], mode='lines',line=dict(color='orange', width=2), name=f'{LongMAPeriod}-根 K棒 移動平均線'), 
+                  secondary_y=True)
+    fig1.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_MA+1:], y=KBar_df['MA_short'][last_nan_index_MA+1:], mode='lines',line=dict(color='pink', width=2), name=f'{ShortMAPeriod}-根 K棒 移動平均線'), 
+                  secondary_y=True)
+    
+    fig1.layout.yaxis2.showgrid=True
+    st.plotly_chart(fig1, use_container_width=True)
+
+
 ##### K線圖, RSI
 with st.expander("K線圖, 長短 RSI"):
     fig2 = make_subplots(specs=[[{"secondary_y": True}]])
@@ -317,29 +319,15 @@ from plotly.subplots import make_subplots
 # KBar_df = pd.read_csv("your_data.csv")
 
 # 設定計算唐琪安通道的 K 棒數目
-dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 200, 20, key="dc_slider")
+dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 1000, 20, key="dc_slider")
 
-
+# 設定計算布林通道的窗口大小
+bb_window = st.slider('設定計算布林通道的窗口大小(整數, 例如 20)', 0, 1000, 20, key="bb_slider")
 
 def calculate_donchian_channel(df, window):
     df['upper_dc'] = df['Close'].rolling(window=window).max()
     df['lower_dc'] = df['Close'].rolling(window=window).min()
     return df
-
-# 唐奇安通道圖表
-with st.expander("唐奇安通道圖"):
-    fig_dc = go.Figure()
-    fig_dc.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'))
-    fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'))
-    fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'))
-    fig_dc.update_layout(height=600, title_text="唐奇安通道")
-    st.plotly_chart(fig_dc, use_container_width=True)
-
-# 設定計算布林通道的窗口大小
-bb_window = st.slider('設定計算布林通道的窗口大小(整數, 例如 20)', 0, 200, 20, key="bb_slider")
-
-# 計算唐琪安通道
-KBar_df = calculate_donchian_channel(KBar_df, window=dc_window)
 
 # 計算布林通道
 def calculate_bollinger_bands(df, window):
@@ -350,29 +338,25 @@ def calculate_bollinger_bands(df, window):
     df['lower_bb'] = rolling_mean - (rolling_std * 2)
     return df
 
+# 計算唐琪安通道
+KBar_df = calculate_donchian_channel(KBar_df, window=dc_window)
+
 # 計算布林通道
 KBar_df = calculate_bollinger_bands(KBar_df, window=bb_window)
+
+# 唐奇安通道圖表
+with st.expander("唐奇安通道圖"):
+    fig_dc = go.Figure()
+    fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'))
+    fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'))
+    fig_dc.update_layout(height=600, title_text="唐奇安通道")
+    st.plotly_chart(fig_dc, use_container_width=True)
 
 # 布林通道圖表
 with st.expander("布林通道圖"):
     fig_bb = go.Figure()
-    fig_bb.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'))
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_bb'], mode='lines', line=dict(color='blue'), name='Upper Bollinger Band'))
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_bb'], mode='lines', line=dict(color='blue'), name='Lower Bollinger Band'))
     fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['middle_bb'], mode='lines', line=dict(color='red'), name='Middle Bollinger Band'))
     fig_bb.update_layout(height=600, title_text="布林通道")
     st.plotly_chart(fig_bb, use_container_width=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
