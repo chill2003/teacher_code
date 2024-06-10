@@ -47,9 +47,9 @@ df_original = df_original.drop('Unnamed: 0',axis=1)
 
 
 ##### 選擇資料區間
-st.subheader("選擇開始與結束的日期, 區間:2022-01-03 至 2022-11-18")
-start_date = st.text_input('選擇開始日期 (日期格式: 2022-01-03)', '2022-01-03')
-end_date = st.text_input('選擇結束日期 (日期格式: 2022-11-18)', '2022-11-18')
+st.sidebar.subheader("選擇開始與結束的日期(2022-01-03 至 2022-11-18)")
+start_date = st.sidebar.text_input('開始日期', '日期格式:2022-01-03')
+end_date = st.sidebar.text_input('結束日期', '日期格式:2022-11-18')
 start_date = datetime.datetime.strptime(start_date,'%Y-%m-%d')
 end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
 # 使用条件筛选选择时间区间的数据
@@ -112,8 +112,8 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 
 Date = start_date.strftime("%Y-%m-%d")
 
-st.subheader("設定一根 K 棒的時間長度(分鐘)")
-cycle_duration = st.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value = 1440, key="KBar_duration")
+st.sidebar.subheader("設定一根K棒的時間長度(分鐘)")
+cycle_duration = st.sidebar.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)',value = 1440, key="KBar_duration")
 cycle_duration = int(cycle_duration)
 #cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
 #KBar = indicator_f_Lo2.KBar(Date,'time',2)
@@ -191,14 +191,13 @@ KBar_df = pd.DataFrame(KBar_dic)
 
 #####  (i) 移動平均線策略   #####
 ####  設定長短移動平均線的 K棒 長度:
-st.subheader("設定計算長移動平均線(MA)的 K 棒數目(整數, 例如 10)")
+st.sidebar.subheader("設定MA的K棒數目")
 #LongMAPeriod=st.number_input('輸入一個整數', key="Long_MA")
 #LongMAPeriod=int(LongMAPeriod)
-LongMAPeriod=st.slider('選擇一個整數', 0, 100, 10)
-st.subheader("設定計算短移動平均線(MA)的 K 棒數目(整數, 例如 2)")
+LongMAPeriod=st.sidebar.slider('設定計算長MA的K 棒數目', 0, 100, 0)
 #ShortMAPeriod=st.number_input('輸入一個整數', key="Short_MA")
 #ShortMAPeriod=int(ShortMAPeriod)
-ShortMAPeriod=st.slider('選擇一個整數', 0, 100, 2)
+ShortMAPeriod=st.sidebar.slider('設定計算短MA的K棒數目', 0, 100, 0)
 
 #### 計算長短移動平均線
 KBar_df['MA_long'] = KBar_df['close'].rolling(window=LongMAPeriod).mean()
@@ -212,10 +211,9 @@ last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].appl
 #####  (ii) RSI 策略   #####
 #### 順勢策略
 ### 設定長短 RSI 的 K棒 長度:
-st.subheader("設定計算長RSI的 K 棒數目(整數, 例如 10)")
-LongRSIPeriod=st.slider('選擇一個整數', 0, 1000, 10)
-st.subheader("設定計算短RSI的 K 棒數目(整數, 例如 2)")
-ShortRSIPeriod=st.slider('選擇一個整數', 0, 1000, 2)
+st.sidebar.subheader("設定RSI的K棒數目")
+LongRSIPeriod=st.sidebar.slider('設定計算長RSI的 K 棒數目', 0, 100, 0)
+ShortRSIPeriod=st.sidebar.slider('設定計算短RSI的 K 棒數目', 0, 100, 0)
 
 ### 計算 RSI指標長短線, 以及定義中線
 ## 假设 df 是一个包含价格数据的Pandas DataFrame，其中 'close' 是KBar週期收盤價
@@ -314,11 +312,12 @@ from plotly.subplots import make_subplots
 # 假設這是您的 DataFrame
 # KBar_df = pd.read_csv("your_data.csv")
 
+st.sidebar.subheader("設定布林通道和唐琪安通道的K棒數目")
 # 設定計算唐琪安通道的 K 棒數目
-dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 1000, 20, key="dc_slider")
+dc_window = st.sidebar.slider('輸入計算唐琪安通道的K棒數目', 0, 100, 0, key="dc_slider")
 
 # 設定計算布林通道的窗口大小
-bb_window = st.slider('設定計算布林通道的窗口大小(整數, 例如 20)', 0, 1000, 20, key="bb_slider")
+bb_window = st.sidebar.slider('輸入計算布林通道的窗口大小', 0, 100, 0, key="bb_slider")
 
 def calculate_donchian_channel(df, window):
     df['upper_dc'] = df['Close'].rolling(window=window).max()
