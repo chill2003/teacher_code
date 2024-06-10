@@ -318,10 +318,10 @@ from plotly.subplots import make_subplots
 # KBar_df = pd.read_csv("your_data.csv")
 
 # 設定計算唐琪安通道的 K 棒數目
-dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 1000, 20)
+dc_window = st.slider(hash("dc_slider"), '設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 1000, 20)
 
 # 設定計算布林通道的窗口大小
-bb_window = st.slider('設定計算布林通道的窗口大小(整數, 例如 20)', 0, 1000, 20)
+bb_window = st.slider(hash("bb_slider"), '設定計算布林通道的窗口大小(整數, 例如 20)', 0, 1000, 20)
 
 # 計算唐琪安通道
 def calculate_donchian_channel(df, window):
