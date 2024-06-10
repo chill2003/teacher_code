@@ -13,6 +13,14 @@ import streamlit as st
 import streamlit.components.v1 as stc
 import time
 
+###### (1) 開始設定 ######
+st.set_page_config(
+    page_title="金融APP看板",
+    page_icon="random",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+)
+
 #進度條
 bar = st.progress(0)
 for i in range(100):
@@ -22,14 +30,6 @@ for i in range(100):
 bar.progress(100, '載入完成！')
 st.success('Success!')
 st.balloons()
-###### (1) 開始設定 ######
-html_temp = """
-		<div style="background-color:#3872fb;padding:10px;border-radius:10px">
-		<h1 style="color:white;text-align:center;">金融看板 </h1>
-		<h2 style="color:white;text-align:center;">Financial Dashboard </h2>
-		</div>
-		"""
-stc.html(html_temp)
 
 #df = pd.read_excel("kbars_台積電_1100701_1100708_2.xlsx")
 #df = pd.read_excel("kbars_2330_2022-07-01-2022-07-31.xlsx")
