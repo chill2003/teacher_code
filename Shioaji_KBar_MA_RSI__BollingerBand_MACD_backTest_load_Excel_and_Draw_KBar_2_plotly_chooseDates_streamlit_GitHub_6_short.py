@@ -319,10 +319,10 @@ from plotly.subplots import make_subplots
 # KBar_df = pd.read_csv("your_data.csv")
 
 # 設定計算唐琪安通道的 K 棒數目
-dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 1000, 20, key="dc_slider")
+dc_window = st.slider('設定計算唐琪安通道的 K 棒數目(整數, 例如 20)', 0, 200, 20, key="dc_slider")
 
 # 設定計算布林通道的窗口大小
-bb_window = st.slider('設定計算布林通道的窗口大小(整數, 例如 20)', 0, 1000, 20, key="bb_slider")
+bb_window = st.slider('設定計算布林通道的窗口大小(整數, 例如 20)', 0, 200, 20, key="bb_slider")
 
 def calculate_donchian_channel(df, window):
     df['upper_dc'] = df['Close'].rolling(window=window).max()
@@ -344,27 +344,23 @@ KBar_df = calculate_donchian_channel(KBar_df, window=dc_window)
 # 計算布林通道
 KBar_df = calculate_bollinger_bands(KBar_df, window=bb_window)
 
-# 繪製圖表
-with st.expander("K線圖、唐奇安通道和布林通道"):
-    fig_combined = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.02)
-    
-    # K線圖
-    fig_combined.add_trace(go.Candlestick(x=KBar_df['Time'], open=KBar_df['Open'], high=KBar_df['High'], low=KBar_df['Low'], close=KBar_df['Close'], name='K線'), row=1, col=1)
-    
-    # 唐奇安通道
-    fig_combined.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'), row=1, col=1)
-    fig_combined.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'), row=1, col=1)
-    
-    # 布林通道
-    fig_combined.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_bb'], mode='lines', line=dict(color='blue'), name='Upper Bollinger Band'), row=1, col=1)
-    fig_combined.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_bb'], mode='lines', line=dict(color='blue'), name='Lower Bollinger Band'), row=1, col=1)
-    fig_combined.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['middle_bb'], mode='lines', line=dict(color='red'), name='Middle Bollinger Band'), row=1, col=1)
-    
-    # 成交量
-    fig_combined.add_trace(go.Bar(x=KBar_df['Time'], y=KBar_df['Volume'], name='成交量', marker=dict(color='black')), row=2, col=1)
-    
-    fig_combined.update_layout(height=800, title_text="K線、唐奇安通道和布林通道", showlegend=False)
-    st.plotly_chart(fig_combined, use_container_width=True)
+# 唐奇安通道圖表
+with st.expander("唐奇安通道圖"):
+    fig_dc = go.Figure()
+    fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_dc'], mode='lines', line=dict(color='green'), name='Upper Donchian Channel'))
+    fig_dc.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_dc'], mode='lines', line=dict(color='green'), name='Lower Donchian Channel'))
+    fig_dc.update_layout(height=600, title_text="唐奇安通道")
+    st.plotly_chart(fig_dc, use_container_width=True)
+
+# 布林通道圖表
+with st.expander("布林通道圖"):
+    fig_bb = go.Figure()
+    fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['upper_bb'], mode='lines', line=dict(color='blue'), name='Upper Bollinger Band'))
+    fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['lower_bb'], mode='lines', line=dict(color='blue'), name='Lower Bollinger Band'))
+    fig_bb.add_trace(go.Scatter(x=KBar_df['Time'], y=KBar_df['middle_bb'], mode='lines', line=dict(color='red'), name='Middle Bollinger Band'))
+    fig_bb.update_layout(height=600, title_text="布林通道")
+    st.plotly_chart(fig_bb, use_container_width=True)
+
 
 
 
