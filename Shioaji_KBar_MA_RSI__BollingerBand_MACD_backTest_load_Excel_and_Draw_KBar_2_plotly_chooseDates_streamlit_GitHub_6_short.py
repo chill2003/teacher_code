@@ -28,8 +28,7 @@ for i in range(100):
     time.sleep(0.05)
 
 bar.progress(100, '載入完成！')
-data_load_state = st.text("圖表家載較慢，請耐心等候~")
-data_load_state.text("資料加載完成!!")
+st.success("資料加載完成!!")
 st.balloons()
 
 #df = pd.read_excel("kbars_台積電_1100701_1100708_2.xlsx")
