@@ -18,7 +18,7 @@ st.set_page_config(
     page_title="金融APP看板",
     page_icon="random",
     layout="centered",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 #進度條
