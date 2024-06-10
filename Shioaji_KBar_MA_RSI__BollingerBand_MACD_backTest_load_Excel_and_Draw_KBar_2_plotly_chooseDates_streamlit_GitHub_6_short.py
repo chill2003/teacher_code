@@ -14,7 +14,7 @@ import streamlit.components.v1 as stc
 import time
 
 ###### (1) 開始設定 ######
-st.title('金融APP看板')
+st.title("金融APP看板")
 st.set_page_config(
     page_title="金融APP看板",
     page_icon="random",
